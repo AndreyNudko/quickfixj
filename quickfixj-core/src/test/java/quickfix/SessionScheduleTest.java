@@ -80,7 +80,7 @@ public class SessionScheduleTest {
     }
 
     private SessionSchedule newSessionSchedule(Date startTime, Date endTime, int startDay,
-            int endDay) throws Exception {
+                                               int endDay) throws Exception {
         SessionSettings settings = new SessionSettings();
         if (startDay >= 0) {
             settings.setString(Session.SETTING_START_DAY, DayConverter.toString(startDay));
@@ -131,13 +131,13 @@ public class SessionScheduleTest {
     }
 
     private void doIsSessionTimeTest(SessionSchedule schedule, boolean expectedInSession, int year,
-            int month, int day, int hour, int minute, int second) {
+                                     int month, int day, int hour, int minute, int second) {
         doIsSessionTimeTest(schedule, expectedInSession, year, month, day, hour, minute, second,
                 TimeZone.getTimeZone("UTC"));
     }
 
     private void doIsSessionTimeTest(SessionSchedule schedule, boolean expectedInSession, int year,
-            int month, int day, int hour, int minute, int second, TimeZone timeZone) {
+                                     int month, int day, int hour, int minute, int second, TimeZone timeZone) {
         mockSystemTimeSource
                 .setTime(getTimeStamp(year, month, day, hour, minute, second, timeZone));
         assertEquals("in session expectation incorrect", expectedInSession, schedule
@@ -145,8 +145,8 @@ public class SessionScheduleTest {
     }
 
     private void doIsSessionTimeTest(boolean expectedInSession, int year, int month, int day,
-            int hour, int minute, int second, TimeZone timeZone, String scheduleStartDay,
-            String scheduleEndDay) throws ConfigError, FieldConvertError {
+                                     int hour, int minute, int second, TimeZone timeZone, String scheduleStartDay,
+                                     String scheduleEndDay) throws ConfigError, FieldConvertError {
         mockSystemTimeSource
                 .setTime(getTimeStamp(year, month, day, hour, minute, second, timeZone));
         SessionSettings settings = new SessionSettings();
@@ -161,8 +161,8 @@ public class SessionScheduleTest {
     }
 
     private void doIsSessionTimeTest(SessionSettings settings, SessionID sessionID,
-            boolean expectedInSession, int year, int month, int day, int hour, int minute,
-            int second, String timeZoneID) throws ConfigError, FieldConvertError {
+                                     boolean expectedInSession, int year, int month, int day, int hour, int minute,
+                                     int second, String timeZoneID) throws ConfigError, FieldConvertError {
         mockSystemTimeSource.setTime(getTimeStamp(year, month, day, hour, minute, second, TimeZone
                 .getTimeZone(timeZoneID)));
         SessionSchedule schedule = new DefaultSessionSchedule(settings, sessionID);
@@ -472,7 +472,7 @@ public class SessionScheduleTest {
      * From 1968 to 1971, GMT was an hour ahead of UTC. If we perform all our calculations in 1970,
      * someone in GMT (e.g. London) will see sessions ending an hour later than expected. This test
      * demonstrates the 1970 behavior and verifies that calculations on current dates give the proper results.
-     *
+     * <p>
      * <p/>
      * More details at:
      * <p/>
@@ -668,7 +668,7 @@ public class SessionScheduleTest {
 
         int timeIncrement = 5; // seconds
 
-        for (;;) {
+        for (; ; ) {
             if (schedule.isSessionTime()) {
                 c.set(Calendar.HOUR_OF_DAY, 16);
                 c.set(Calendar.MINUTE, 0);
@@ -679,7 +679,7 @@ public class SessionScheduleTest {
             mockSystemTimeSource.increment(timeIncrement * 1000L);
         }
 
-        for (;;) {
+        for (; ; ) {
             if (!schedule.isSessionTime()) {
                 c.add(Calendar.WEEK_OF_YEAR, 1);
                 c.set(Calendar.HOUR_OF_DAY, 13);
@@ -813,7 +813,7 @@ public class SessionScheduleTest {
     }
 
     private void doWeeklyIsSameSessionTest(String startDay, String startTimeString, String endDay,
-            String endTimeString) throws ConfigError, FieldConvertError, ParseException {
+                                           String endTimeString) throws ConfigError, FieldConvertError, ParseException {
         DateFormat timeFormat = new SimpleDateFormat("HH:mm:ss");
         timeFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
         Calendar startTime = parseTime(startTimeString, timeFormat);
@@ -863,7 +863,7 @@ public class SessionScheduleTest {
     }
 
     private void doWeeklyIsSameSessionTest(SessionSchedule schedule, Calendar sessionCreateTime,
-            Calendar scheduleStartTime, Calendar scheduleEndTime) {
+                                           Calendar scheduleStartTime, Calendar scheduleEndTime) {
         Calendar initialSystemTime = SystemTime.getUtcCalendar();
         initialSystemTime.set(Calendar.DAY_OF_WEEK, Calendar.FRIDAY);
         initialSystemTime.set(Calendar.HOUR_OF_DAY, 15);
@@ -905,7 +905,7 @@ public class SessionScheduleTest {
     }
 
     private final SimpleDateFormat dateFormat = new SimpleDateFormat("E M/d HH:mm:ss");
-    
+
     {
         dateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
     }
@@ -929,13 +929,13 @@ public class SessionScheduleTest {
     }
 
     private void doIsSameSessionTest(SessionSchedule schedule, Calendar time1, Calendar time2,
-            boolean isSameSession) {
+                                     boolean isSameSession) {
         assertEquals("isSameSession is wrong", isSameSession, schedule.isSameSession(time1, time2));
         assertEquals("isSameSession is wrong", isSameSession, schedule.isSameSession(time2, time1));
     }
 
     private Calendar getTimeStamp(int year, int month, int day, int hour, int minute, int second,
-            TimeZone timeZone) {
+                                  TimeZone timeZone) {
         Calendar c = new GregorianCalendar(year, month, day, hour, minute, second);
         c.setTimeZone(timeZone);
         return c;
@@ -1076,9 +1076,9 @@ public class SessionScheduleTest {
         doIsSessionTimeTest(schedule, true, 2017, Calendar.JANUARY, 6, 3, 0, 0);
         doIsSessionTimeTest(schedule, false, 2017, Calendar.JANUARY, 6, 3, 0, 1);
         doIsSessionTimeTest(schedule, false, 2017, Calendar.JANUARY, 6, 17, 59, 59);
-        doIsSessionTimeTest(schedule, true, 2017, Calendar.JANUARY, 6, 18, 0, 0);
+        doIsSessionTimeTest(schedule, false, 2017, Calendar.JANUARY, 6, 18, 0, 0);
         // Saturday
-        doIsSessionTimeTest(schedule, true, 2017, Calendar.JANUARY, 7, 3, 0, 0);
+        doIsSessionTimeTest(schedule, false, 2017, Calendar.JANUARY, 7, 3, 0, 0);
         doIsSessionTimeTest(schedule, false, 2017, Calendar.JANUARY, 7, 3, 0, 1);
         doIsSessionTimeTest(schedule, false, 2017, Calendar.JANUARY, 7, 17, 59, 59);
         doIsSessionTimeTest(schedule, false, 2017, Calendar.JANUARY, 7, 18, 0, 0);
@@ -1207,7 +1207,7 @@ public class SessionScheduleTest {
      * From 1968 to 1971, GMT was an hour ahead of UTC. If we perform all our calculations in 1970,
      * someone in GMT (e.g. London) will see sessions ending an hour later than expected. This test
      * demonstrates the 1970 behavior and verifies that calculations on current dates give the proper results.
-     *
+     * <p>
      * <p/>
      * More details at:
      * <p/>
@@ -1402,6 +1402,215 @@ public class SessionScheduleTest {
         // November,7 -> Friday
         doIsSessionTimeTest(schedule, true, 2008, Calendar.NOVEMBER, 7, 17, 0, 0,
                 TimeZone.getTimeZone("America/New_York"));
+    }
+
+    @Test
+    public void testIsSessionTimeWithStartTimeAfterEndAndWeekdays() throws Exception {
+        SessionSettings settings = new SessionSettings();
+        settings.setString(Session.SETTING_TIMEZONE, "America/New_York");
+        settings.setString(Session.SETTING_START_TIME, "17:05:00");
+        settings.setString(Session.SETTING_END_TIME, "16:55:00");
+        settings.setString(Session.SETTING_WEEKDAYS, "Sun,Mon,Tue,Wed,Thu,Fri");
+
+        mockSystemTimeSource.setTime(getTimeStamp(2008, Calendar.NOVEMBER, 2, 18, 0, 0, TimeZone.getTimeZone("America/New_York")));
+
+        SessionID sessionID = new SessionID("FIX.4.2", "SENDER", "TARGET");
+        SessionSchedule schedule = new DefaultSessionSchedule(settings, sessionID);
+
+
+        // Sun 17:05 - Monday 16:55
+        //  not in session Sun [00:00:00, 17:04:59]
+        doIsSessionTimeTest(schedule, false, 2022, Calendar.NOVEMBER, 13, 0, 0, 0,
+                TimeZone.getTimeZone("America/New_York"));
+        doIsSessionTimeTest(schedule, false, 2022, Calendar.NOVEMBER, 13, 16, 55, 0,
+                TimeZone.getTimeZone("America/New_York"));
+        doIsSessionTimeTest(schedule, false, 2022, Calendar.NOVEMBER, 13, 17, 4, 59,
+                TimeZone.getTimeZone("America/New_York"));
+        // in session Sun [17:05, 23:59:59]
+        doIsSessionTimeTest(schedule, true, 2022, Calendar.NOVEMBER, 13, 17, 5, 0,
+                TimeZone.getTimeZone("America/New_York"));
+        doIsSessionTimeTest(schedule, true, 2022, Calendar.NOVEMBER, 13, 23, 59, 59,
+                TimeZone.getTimeZone("America/New_York"));
+        // in session Mon [00:00:00, 16:55:00]
+        doIsSessionTimeTest(schedule, true, 2022, Calendar.NOVEMBER, 14, 0, 0, 0,
+                TimeZone.getTimeZone("America/New_York"));
+        doIsSessionTimeTest(schedule, true, 2022, Calendar.NOVEMBER, 14, 16, 55, 0,
+                TimeZone.getTimeZone("America/New_York"));
+        // not in session Mon [16:55:01, 17:04:59]
+        doIsSessionTimeTest(schedule, false, 2022, Calendar.NOVEMBER, 14, 16, 55, 1,
+                TimeZone.getTimeZone("America/New_York"));
+        doIsSessionTimeTest(schedule, false, 2022, Calendar.NOVEMBER, 14, 17, 4, 59,
+                TimeZone.getTimeZone("America/New_York"));
+
+        // Mon 17:05 - Tue 16:55
+        // in session Mon [17:55:00, 23:59:59]
+        doIsSessionTimeTest(schedule, true, 2022, Calendar.NOVEMBER, 14, 17, 5, 0,
+                TimeZone.getTimeZone("America/New_York"));
+        doIsSessionTimeTest(schedule, true, 2022, Calendar.NOVEMBER, 14, 23, 59, 59,
+                TimeZone.getTimeZone("America/New_York"));
+        // in session Tue [00:00:00, 16:55:00]
+        doIsSessionTimeTest(schedule, true, 2022, Calendar.NOVEMBER, 15, 0, 0, 0,
+                TimeZone.getTimeZone("America/New_York"));
+        doIsSessionTimeTest(schedule, true, 2022, Calendar.NOVEMBER, 15, 16, 55, 0,
+                TimeZone.getTimeZone("America/New_York"));
+        // not in session Tue [16:55:01, 17:04:59]
+        doIsSessionTimeTest(schedule, false, 2022, Calendar.NOVEMBER, 15, 16, 55, 1,
+                TimeZone.getTimeZone("America/New_York"));
+        doIsSessionTimeTest(schedule, false, 2022, Calendar.NOVEMBER, 15, 17, 4, 59,
+                TimeZone.getTimeZone("America/New_York"));
+
+        // Tue 17:05 - Wed 16:55
+        // in session Tue [17:55:00, 23:59:59]
+        doIsSessionTimeTest(schedule, true, 2022, Calendar.NOVEMBER, 15, 17, 5, 0,
+                TimeZone.getTimeZone("America/New_York"));
+        doIsSessionTimeTest(schedule, true, 2022, Calendar.NOVEMBER, 15, 23, 59, 59,
+                TimeZone.getTimeZone("America/New_York"));
+        // in session Wed [00:00:00, 16:55:00]
+        doIsSessionTimeTest(schedule, true, 2022, Calendar.NOVEMBER, 16, 0, 0, 0,
+                TimeZone.getTimeZone("America/New_York"));
+        doIsSessionTimeTest(schedule, true, 2022, Calendar.NOVEMBER, 16, 16, 55, 0,
+                TimeZone.getTimeZone("America/New_York"));
+        // not in session Wed [16:55:01, 17:04:59]
+        doIsSessionTimeTest(schedule, false, 2022, Calendar.NOVEMBER, 16, 16, 55, 1,
+                TimeZone.getTimeZone("America/New_York"));
+        doIsSessionTimeTest(schedule, false, 2022, Calendar.NOVEMBER, 16, 17, 4, 59,
+                TimeZone.getTimeZone("America/New_York"));
+
+        // Wed 17:05 - Thu 16:55
+        // in session Wed [17:55:00, 23:59:59]
+        doIsSessionTimeTest(schedule, true, 2022, Calendar.NOVEMBER, 16, 17, 5, 0,
+                TimeZone.getTimeZone("America/New_York"));
+        doIsSessionTimeTest(schedule, true, 2022, Calendar.NOVEMBER, 16, 23, 59, 59,
+                TimeZone.getTimeZone("America/New_York"));
+        // in session Thu [00:00:00, 16:55:00]
+        doIsSessionTimeTest(schedule, true, 2022, Calendar.NOVEMBER, 17, 0, 0, 0,
+                TimeZone.getTimeZone("America/New_York"));
+        doIsSessionTimeTest(schedule, true, 2022, Calendar.NOVEMBER, 17, 16, 55, 0,
+                TimeZone.getTimeZone("America/New_York"));
+        // not in session Thu [16:55:01, 17:04:59]
+        doIsSessionTimeTest(schedule, false, 2022, Calendar.NOVEMBER, 17, 16, 55, 1,
+                TimeZone.getTimeZone("America/New_York"));
+        doIsSessionTimeTest(schedule, false, 2022, Calendar.NOVEMBER, 17, 17, 4, 59,
+                TimeZone.getTimeZone("America/New_York"));
+
+        // Thu 17:05 - Fri 16:55
+        // in session Thu [17:55:00, 23:59:59]
+        doIsSessionTimeTest(schedule, true, 2022, Calendar.NOVEMBER, 17, 17, 5, 0,
+                TimeZone.getTimeZone("America/New_York"));
+        doIsSessionTimeTest(schedule, true, 2022, Calendar.NOVEMBER, 17, 23, 59, 59,
+                TimeZone.getTimeZone("America/New_York"));
+        // in session Fri [00:00:00, 16:55:00]
+        doIsSessionTimeTest(schedule, true, 2022, Calendar.NOVEMBER, 18, 0, 0, 0,
+                TimeZone.getTimeZone("America/New_York"));
+        doIsSessionTimeTest(schedule, true, 2022, Calendar.NOVEMBER, 18, 16, 55, 0,
+                TimeZone.getTimeZone("America/New_York"));
+        // not in session Fri [16:55:01, 00:00:00]
+        doIsSessionTimeTest(schedule, false, 2022, Calendar.NOVEMBER, 18, 16, 55, 1,
+                TimeZone.getTimeZone("America/New_York"));
+        doIsSessionTimeTest(schedule, false, 2022, Calendar.NOVEMBER, 18, 17, 4, 59,
+                TimeZone.getTimeZone("America/New_York"));
+        doIsSessionTimeTest(schedule, false, 2022, Calendar.NOVEMBER, 18, 17, 5, 0,
+                TimeZone.getTimeZone("America/New_York"));
+        doIsSessionTimeTest(schedule, false, 2022, Calendar.NOVEMBER, 18, 17, 5, 1,
+                TimeZone.getTimeZone("America/New_York"));
+        doIsSessionTimeTest(schedule, false, 2022, Calendar.NOVEMBER, 18, 23, 59, 59,
+                TimeZone.getTimeZone("America/New_York"));
+        // Sat - not in schedule
+        doIsSessionTimeTest(schedule, false, 2022, Calendar.NOVEMBER, 19, 0, 0, 0,
+                TimeZone.getTimeZone("America/New_York"));
+        doIsSessionTimeTest(schedule, false, 2022, Calendar.NOVEMBER, 19, 16, 54, 59,
+                TimeZone.getTimeZone("America/New_York"));
+        doIsSessionTimeTest(schedule, false, 2022, Calendar.NOVEMBER, 19, 16, 55, 0,
+                TimeZone.getTimeZone("America/New_York"));
+        doIsSessionTimeTest(schedule, false, 2022, Calendar.NOVEMBER, 19, 16, 55, 1,
+                TimeZone.getTimeZone("America/New_York"));
+        doIsSessionTimeTest(schedule, false, 2022, Calendar.NOVEMBER, 19, 17, 4, 59,
+                TimeZone.getTimeZone("America/New_York"));
+        doIsSessionTimeTest(schedule, false, 2022, Calendar.NOVEMBER, 19, 17, 5, 0,
+                TimeZone.getTimeZone("America/New_York"));
+        doIsSessionTimeTest(schedule, false, 2022, Calendar.NOVEMBER, 19, 17, 5, 1,
+                TimeZone.getTimeZone("America/New_York"));
+        doIsSessionTimeTest(schedule, false, 2022, Calendar.NOVEMBER, 19, 23, 59, 59,
+                TimeZone.getTimeZone("America/New_York"));
+    }
+
+    @Test
+    public void testIsSameSessionWithStartTimeAfterEndAndWeekdays() throws Exception {
+        SessionSettings settings = new SessionSettings();
+        settings.setString(Session.SETTING_TIMEZONE, "America/New_York");
+        settings.setString(Session.SETTING_START_TIME, "17:05:00");
+        settings.setString(Session.SETTING_END_TIME, "16:55:00");
+        settings.setString(Session.SETTING_WEEKDAYS, "Sun,Mon,Tue,Wed,Thu,Fri");
+
+        TimeZone tz = TimeZone.getTimeZone("America/New_York");
+        mockSystemTimeSource.setTime(getTimeStamp(2008, Calendar.NOVEMBER, 2, 18, 0, 0, tz));
+
+        SessionID sessionID = new SessionID("FIX.4.2", "SENDER", "TARGET");
+        SessionSchedule schedule = new DefaultSessionSchedule(settings, sessionID);
+
+        // Sun 17:05 - Mon 16:55
+        // t1 is before start time, t2 is in session
+        Calendar t1 = getTimeStamp(2022, Calendar.NOVEMBER, 13, 14, 0, 0, tz);
+        Calendar t2 = getTimeStamp(2022, Calendar.NOVEMBER, 13, 17, 5, 0, tz);
+        doIsSameSessionTest(schedule, t1, t2, false);
+
+        // t1 and t2 are in session
+        t1 = getTimeStamp(2022, Calendar.NOVEMBER, 13, 17, 5, 0, tz);
+
+        t2 = getTimeStamp(2022, Calendar.NOVEMBER, 13, 23, 59, 59, tz);
+        doIsSameSessionTest(schedule, t1, t2, true);
+
+        t2 = getTimeStamp(2022, Calendar.NOVEMBER, 14, 0, 0, 0, tz);
+        doIsSameSessionTest(schedule, t1, t2, true);
+
+        t2 = getTimeStamp(2022, Calendar.NOVEMBER, 14, 16, 55, 0, tz);
+        doIsSameSessionTest(schedule, t1, t2, true);
+
+        // t1 is in session, t2 is after end time (Mon)
+        t2 = getTimeStamp(2022, Calendar.NOVEMBER, 14, 16, 55, 1, tz);
+        doIsSameSessionTest(schedule, t1, t2, false);
+
+        // Mon 17:05 - Tue 16:55
+
+        // t1 and t2 are in session
+        t1 = getTimeStamp(2022, Calendar.NOVEMBER, 14, 17, 5, 0, tz);
+
+        t2 = getTimeStamp(2022, Calendar.NOVEMBER, 14, 23, 59, 59, tz);
+        doIsSameSessionTest(schedule, t1, t2, true);
+
+        t2 = getTimeStamp(2022, Calendar.NOVEMBER, 15, 0, 0, 0, tz);
+        doIsSameSessionTest(schedule, t1, t2, true);
+
+        t2 = getTimeStamp(2022, Calendar.NOVEMBER, 15, 16, 55, 0, tz);
+        doIsSameSessionTest(schedule, t1, t2, true);
+
+        // t1 is in session, t2 is after end time
+        t2 = getTimeStamp(2022, Calendar.NOVEMBER, 15, 16, 55, 1, tz);
+        doIsSameSessionTest(schedule, t1, t2, false);
+
+        // Thu 17:05 - Fri 16:55
+
+        // t1 and t2 are in session
+        t1 = getTimeStamp(2022, Calendar.NOVEMBER, 17, 17, 5, 0, tz);
+
+        t2 = getTimeStamp(2022, Calendar.NOVEMBER, 17, 23, 59, 59, tz);
+        doIsSameSessionTest(schedule, t1, t2, true);
+
+        t2 = getTimeStamp(2022, Calendar.NOVEMBER, 18, 0, 0, 0, tz);
+        doIsSameSessionTest(schedule, t1, t2, true);
+
+        t2 = getTimeStamp(2022, Calendar.NOVEMBER, 18, 16, 55, 0, tz);
+        doIsSameSessionTest(schedule, t1, t2, true);
+
+        // t1 is in session, t2 is after end time (Tue)
+        t2 = getTimeStamp(2022, Calendar.NOVEMBER, 18, 16, 55, 1, tz);
+        doIsSameSessionTest(schedule, t1, t2, false);
+
+        t2 = getTimeStamp(2022, Calendar.NOVEMBER, 18, 17, 5, 0, tz);
+        doIsSameSessionTest(schedule, t1, t2, false);
+
+        t2 = getTimeStamp(2022, Calendar.NOVEMBER, 18, 17, 23, 59, tz);
+        doIsSameSessionTest(schedule, t1, t2, false);
     }
 
 }
